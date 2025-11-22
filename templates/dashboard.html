@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard-cards">
+    <div class="operation-card">
+        <h3>Receipt</h3>
+        <div class="card-stats">
+            <div class="stat-item">
+                <span class="stat-label">To receive</span>
+                <span class="stat-value">{{ kpis.pending_receipts }}</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Late</span>
+                <span class="stat-value">{{ kpis.late_receipts or 0 }}</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Total operations</span>
+                <span class="stat-value">{{ kpis.total_receipts or 0 }}</span>
+            </div>
+        </div>
+        <a href="/operations/receipts" class="btn btn-primary btn-sm">+ To Receive</a>
+    </div>
+
+    <div class="operation-card">
+        <h3>Delivery</h3>
+        <div class="card-stats">
+            <div class="stat-item">
+                <span class="stat-label">To Deliver</span>
+                <span class="stat-value">{{ kpis.pending_deliveries }}</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Waiting</span>
+                <span class="stat-value">{{ kpis.waiting_deliveries or 0 }}</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Total operations</span>
+                <span class="stat-value">{{ kpis.total_deliveries or 0 }}</span>
+            </div>
+        </div>
+        <a href="/operations/deliveries" class="btn btn-primary btn-sm">+ To Deliver</a>
+    </div>
+</div>
+
+<div class="card" style="margin-top: 30px;">
+    <div class="card-header">
+        <h2>Recent Operations</h2>
+    </div>
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Supplier/Customer</th>
+                    <th>Created At</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for op in recent_operations %}
+                <tr>
+                    <td>#{{ op.id }}</td>
+                    <td><span class="badge badge-{{ op.doc_type.value.lower() }}">{{ op.doc_type.value }}</span></td>
+                    <td><span class="status-badge status-{{ op.status.value.lower() }}">{{ op.status.value }}</span></td>
+                    <td>{{ op.supplier_name or op.customer_name or '-' }}</td>
+                    <td>{{ op.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="text-center">No operations yet</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

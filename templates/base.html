@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}StockMaster{% endblock %}</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="app-container">
+        {% if user %}
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>StockMaster</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="/dashboard" class="nav-item {% if request.url.path == '/dashboard' %}active{% endif %}">
+                    <span class="nav-icon">📊</span>
+                    Dashboard
+                </a>
+                <a href="/products" class="nav-item {% if '/products' in request.url.path %}active{% endif %}">
+                    <span class="nav-icon">📦</span>
+                    Products
+                </a>
+                <a href="/stock" class="nav-item {% if request.url.path == '/stock' %}active{% endif %}">
+                    <span class="nav-icon">📊</span>
+                    Stock
+                </a>
+                <div class="nav-section">Operations</div>
+                <a href="/operations/receipts" class="nav-item {% if '/receipts' in request.url.path %}active{% endif %}">
+                    <span class="nav-icon">📥</span>
+                    Receipt
+                </a>
+                <a href="/operations/deliveries" class="nav-item {% if '/deliveries' in request.url.path %}active{% endif %}">
+                    <span class="nav-icon">📤</span>
+                    Delivery
+                </a>
+                <a href="/operations/adjustments" class="nav-item {% if '/adjustments' in request.url.path %}active{% endif %}">
+                    <span class="nav-icon">⚙️</span>
+                    Adjustment
+                </a>
+                <div class="nav-section">Settings</div>
+                <a href="/settings/warehouses" class="nav-item {% if '/warehouses' in request.url.path %}active{% endif %}">
+                    <span class="nav-icon">🏭</span>
+                    Warehouses
+                </a>
+                <a href="/settings/locations" class="nav-item {% if '/locations' in request.url.path %}active{% endif %}">
+                    <span class="nav-icon">📍</span>
+                    Locations
+                </a>
+                <a href="/operations/moves" class="nav-item {% if '/moves' in request.url.path %}active{% endif %}">
+                    <span class="nav-icon">📋</span>
+                    Move History
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-name">{{ user.name }}</div>
+                    <div class="user-role">{{ user.role }}</div>
+                </div>
+                <a href="/logout" class="logout-btn">Logout</a>
+            </div>
+        </aside>
+        {% endif %}
+        
+        <main class="main-content">
+            {% if user %}
+            <header class="top-bar">
+                <h1>{% block page_title %}StockMaster{% endblock %}</h1>
+            </header>
+            {% endif %}
+            
+            <div class="content">
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>

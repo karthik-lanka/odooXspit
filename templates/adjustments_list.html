@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block page_title %}Adjustments{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2>Stock Adjustments</h2>
+        <a href="/operations/adjustments/new" class="btn btn-primary">+ New Adjustment</a>
+    </div>
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Reference</th>
+                    <th>Warehouse</th>
+                    <th>Location</th>
+                    <th>Products</th>
+                    <th>Created At</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for adjustment in adjustments %}
+                <tr>
+                    <td>#{{ adjustment.id }}</td>
+                    <td>{{ adjustment.to_warehouse.code if adjustment.to_warehouse else '-' }}</td>
+                    <td>{{ adjustment.to_location.code if adjustment.to_location else '-' }}</td>
+                    <td>{{ adjustment.lines|length }}</td>
+                    <td>{{ adjustment.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td>
+                        <span class="status-badge status-{{ adjustment.status.value.lower() }}">{{ adjustment.status.value }}</span>
+                        {% if adjustment.status.value != 'DONE' %}
+                        <form method="post" action="/operations/adjustments/{{ adjustment.id }}/validate" style="display: inline;">
+                            <button type="submit" class="btn btn-success btn-sm">Apply</button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="text-center">No adjustments yet</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

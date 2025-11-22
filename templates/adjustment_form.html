@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block page_title %}New Adjustment{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2>New Stock Adjustment</h2>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Warehouse</label>
+                    <select name="to_warehouse_id" id="warehouse" required>
+                        <option value="">Select warehouse</option>
+                        {% for warehouse in warehouses %}
+                        <option value="{{ warehouse.id }}">{{ warehouse.name }} ({{ warehouse.code }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Location</label>
+                    <select name="to_location_id" id="location" required>
+                        <option value="">Select location</option>
+                        {% for location in locations %}
+                        <option value="{{ location.id }}" data-warehouse="{{ location.warehouse_id }}">
+                            {{ location.name }} ({{ location.code }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Adjustments</label>
+                <div id="product-lines">
+                    <div class="line-item">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <select name="product_id[]" required>
+                                    <option value="">Select product</option>
+                                    {% for product in products %}
+                                    <option value="{{ product.id }}">{{ product.name }} ({{ product.sku }})</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <input type="number" name="quantity[]" placeholder="Quantity (+/-)" step="0.01" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" onclick="addLine()" class="btn btn-secondary btn-sm">Add Line</button>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Create Adjustment</button>
+                <a href="/operations/adjustments" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function addLine() {
+    const container = document.getElementById('product-lines');
+    const template = container.querySelector('.line-item').cloneNode(true);
+    template.querySelectorAll('select, input').forEach(input => input.value = '');
+    container.appendChild(template);
+}
+</script>
+{% endblock %}

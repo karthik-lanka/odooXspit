@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block page_title %}New Receipt{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Create New Receipt</h2>
+    <a href="/operations/receipts" class="btn btn-secondary">Back to List</a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="post" action="/operations/receipts/new" id="receiptForm">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="supplier_name">Supplier Name</label>
+                    <input type="text" id="supplier_name" name="supplier_name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="to_warehouse_id">To Warehouse</label>
+                    <select id="to_warehouse_id" name="to_warehouse_id" required onchange="updateLocations()">
+                        <option value="">Select Warehouse</option>
+                        {% for warehouse in warehouses %}
+                        <option value="{{ warehouse.id }}">{{ warehouse.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="to_location_id">To Location</label>
+                    <select id="to_location_id" name="to_location_id" required>
+                        <option value="">Select Location</option>
+                        {% for location in locations %}
+                        <option value="{{ location.id }}" data-warehouse="{{ location.warehouse_id }}">{{ location.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            
+            <h3 style="margin-top: 30px;">Line Items</h3>
+            <div id="lineItems">
+                <div class="line-item">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Product</label>
+                            <select name="product_id[]" required>
+                                <option value="">Select Product</option>
+                                {% for product in products %}
+                                <option value="{{ product.id }}">{{ product.name }} ({{ product.sku }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Quantity</label>
+                            <input type="number" name="quantity[]" step="0.01" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <button type="button" class="btn btn-secondary" onclick="addLineItem()">+ Add Line</button>
+            
+            <div class="form-actions" style="margin-top: 30px;">
+                <button type="submit" class="btn btn-primary">Create Receipt</button>
+                <a href="/operations/receipts" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function addLineItem() {
+    const container = document.getElementById('lineItems');
+    const newItem = container.firstElementChild.cloneNode(true);
+    newItem.querySelectorAll('select, input').forEach(input => input.value = '');
+    container.appendChild(newItem);
+}
+
+function updateLocations() {
+    const warehouseId = document.getElementById('to_warehouse_id').value;
+    const locationSelect = document.getElementById('to_location_id');
+    const options = locationSelect.querySelectorAll('option');
+    
+    options.forEach(option => {
+        if (option.value === '') {
+            option.style.display = 'block';
+        } else if (option.dataset.warehouse === warehouseId) {
+            option.style.display = 'block';
+        } else {
+            option.style.display = 'none';
+        }
+    });
+    
+    locationSelect.value = '';
+}
+</script>
+{% endblock %}

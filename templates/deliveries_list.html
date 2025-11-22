@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block page_title %}Deliveries{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2>Delivery</h2>
+        <a href="/operations/deliveries/new" class="btn btn-primary">+ To Deliver</a>
+    </div>
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Reference</th>
+                    <th>From</th>
+                    <th>Contact</th>
+                    <th>To</th>
+                    <th>Qty</th>
+                    <th>Schedule Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for delivery in deliveries %}
+                <tr>
+                    <td>{{ delivery.id }}</td>
+                    <td>{{ delivery.from_warehouse.code if delivery.from_warehouse else '-' }}/{{ delivery.from_location.code if delivery.from_location else '-' }}</td>
+                    <td>{{ delivery.customer_name or '-' }}</td>
+                    <td>{{ delivery.customer_name or '-' }}</td>
+                    <td>{{ delivery.lines|length }}</td>
+                    <td>{{ delivery.created_at.strftime('%d/%m/%Y') }}</td>
+                    <td>
+                        <span class="status-badge status-{{ delivery.status.value.lower() }}">{{ delivery.status.value }}</span>
+                        {% if delivery.status.value != 'DONE' %}
+                        <form method="post" action="/operations/deliveries/{{ delivery.id }}/validate" style="display: inline;">
+                            <button type="submit" class="btn btn-success btn-sm">Validate</button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" class="text-center">No deliveries yet</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

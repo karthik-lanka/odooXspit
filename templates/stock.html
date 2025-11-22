@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block page_title %}Stock{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2>Stock</h2>
+        <form method="get" class="search-form">
+            <input type="text" name="search" placeholder="Search products..." value="{{ search }}">
+            <button type="submit" class="btn btn-secondary">Search</button>
+        </form>
+    </div>
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Per Unit Cost</th>
+                    <th>On Hand</th>
+                    <th>Free to Use</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in stock_items %}
+                <tr>
+                    <td>{{ item.product.name }} ({{ item.product.sku }})</td>
+                    <td>₹{{ "%.2f"|format(item.product.cost) }}</td>
+                    <td id="quantity-{{ item.product.id }}">{{ item.total_quantity|int }} {{ item.product.uom }}</td>
+                    <td>{{ item.total_quantity|int }} {{ item.product.uom }}</td>
+                    <td>
+                        <button onclick="showUpdateForm({{ item.product.id }}, '{{ item.product.name }}', {{ item.total_quantity|int }})" class="btn btn-sm btn-primary">Update Stock</button>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="text-center">No stock found</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="update-modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000;">
+    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 8px; min-width: 400px;">
+        <h3 id="modal-title" style="margin-bottom: 20px;"></h3>
+        <form method="post" action="/stock/update">
+            <input type="hidden" name="product_id" id="product_id">
+            <div class="form-group">
+                <label>Current Quantity: <span id="current-qty"></span></label>
+            </div>
+            <div class="form-group">
+                <label>Adjustment Quantity (+ to add, - to subtract)</label>
+                <input type="number" name="adjustment" id="adjustment" step="0.01" required>
+                <p class="text-muted" style="font-size: 12px; margin-top: 5px;">Example: +50 to add 50 units, -20 to remove 20 units</p>
+            </div>
+            <div class="form-group">
+                <label>Reason</label>
+                <textarea name="reason" rows="2" placeholder="Optional reason for adjustment"></textarea>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Update Stock</button>
+                <button type="button" onclick="hideUpdateForm()" class="btn btn-secondary">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function showUpdateForm(productId, productName, currentQty) {
+    document.getElementById('update-modal').style.display = 'block';
+    document.getElementById('modal-title').textContent = 'Update Stock - ' + productName;
+    document.getElementById('product_id').value = productId;
+    document.getElementById('current-qty').textContent = currentQty;
+    document.getElementById('adjustment').value = '';
+}
+
+function hideUpdateForm() {
+    document.getElementById('update-modal').style.display = 'none';
+}
+</script>
+{% endblock %}

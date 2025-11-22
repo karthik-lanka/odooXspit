@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block page_title %}Receipts{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Receipts (Incoming Stock)</h2>
+    <a href="/operations/receipts/new" class="btn btn-primary">+ New Receipt</a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Supplier</th>
+                    <th>Status</th>
+                    <th>Created At</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for receipt in receipts %}
+                <tr>
+                    <td>#{{ receipt.id }}</td>
+                    <td>{{ receipt.supplier_name }}</td>
+                    <td><span class="status-badge status-{{ receipt.status.value.lower() }}">{{ receipt.status.value }}</span></td>
+                    <td>{{ receipt.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td>
+                        {% if receipt.status.value != 'DONE' and receipt.status.value != 'CANCELED' %}
+                        <form method="post" action="/operations/receipts/{{ receipt.id }}/validate" style="display: inline;">
+                            <button type="submit" class="btn btn-sm btn-success">Validate</button>
+                        </form>
+                        {% else %}
+                        <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="text-center">No receipts yet</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

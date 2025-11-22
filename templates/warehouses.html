@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block page_title %}Warehouses{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2>Warehouses</h2>
+        <button onclick="toggleForm()" class="btn btn-primary">+ New Warehouse</button>
+    </div>
+    <div class="card-body">
+        <div id="warehouse-form" style="display: none; margin-bottom: 20px; padding: 20px; background: var(--gray-50); border-radius: 8px;">
+            <h3 style="margin-bottom: 15px;">Add New Warehouse</h3>
+            <form method="post">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label>Short Code</label>
+                    <input type="text" name="code" required>
+                </div>
+                <div class="form-group">
+                    <label>Address</label>
+                    <textarea name="address" rows="3"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="button" onclick="toggleForm()" class="btn btn-secondary">Cancel</button>
+                </div>
+            </form>
+        </div>
+        
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Code</th>
+                    <th>Address</th>
+                    <th>Created</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for warehouse in warehouses %}
+                <tr>
+                    <td>{{ warehouse.name }}</td>
+                    <td>{{ warehouse.code }}</td>
+                    <td>{{ warehouse.address or '-' }}</td>
+                    <td>{{ warehouse.created_at.strftime('%Y-%m-%d') }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4" class="text-center">No warehouses found</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+function toggleForm() {
+    const form = document.getElementById('warehouse-form');
+    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+}
+</script>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block page_title %}Locations{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2>Locations</h2>
+        <button onclick="toggleForm()" class="btn btn-primary">+ New Location</button>
+    </div>
+    <div class="card-body">
+        <div id="location-form" style="display: none; margin-bottom: 20px; padding: 20px; background: var(--gray-50); border-radius: 8px;">
+            <h3 style="margin-bottom: 15px;">Add New Location</h3>
+            <form method="post">
+                <div class="form-group">
+                    <label>Warehouse</label>
+                    <select name="warehouse_id" required>
+                        <option value="">Select warehouse</option>
+                        {% for warehouse in warehouses %}
+                        <option value="{{ warehouse.id }}">{{ warehouse.name }} ({{ warehouse.code }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label>Short Code</label>
+                    <input type="text" name="code" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="button" onclick="toggleForm()" class="btn btn-secondary">Cancel</button>
+                </div>
+            </form>
+        </div>
+        
+        <p class="text-muted" style="margin-bottom: 15px;">This holds the multiple locations of warehouses (rooms, etc.)</p>
+        
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Short Code</th>
+                    <th>Warehouse</th>
+                    <th>Created</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for location in locations %}
+                <tr>
+                    <td>{{ location.name }}</td>
+                    <td>{{ location.code }}</td>
+                    <td>{{ location.warehouse.name }} ({{ location.warehouse.code }})</td>
+                    <td>{{ location.created_at.strftime('%Y-%m-%d') }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4" class="text-center">No locations found</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+function toggleForm() {
+    const form = document.getElementById('location-form');
+    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+}
+</script>
+{% endblock %}

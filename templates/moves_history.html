@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block page_title %}Move History{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Stock Move History</h2>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Product</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Quantity</th>
+                    <th>Type</th>
+                    <th>Document</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for move in moves %}
+                <tr>
+                    <td>{{ move.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td>{{ move.product.name }}</td>
+                    <td>
+                        {% if move.from_warehouse %}
+                        {{ move.from_warehouse.name }} / {{ move.from_location.name }}
+                        {% else %}
+                        -
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if move.to_warehouse %}
+                        {{ move.to_warehouse.name }} / {{ move.to_location.name }}
+                        {% else %}
+                        -
+                        {% endif %}
+                    </td>
+                    <td>{{ move.quantity }}</td>
+                    <td><span class="badge badge-{{ move.move_type.value.lower() }}">{{ move.move_type.value }}</span></td>
+                    <td>#{{ move.document_id }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" class="text-center">No stock movements yet</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

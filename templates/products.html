@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block page_title %}Products{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Products Management</h2>
+    <button class="btn btn-primary" onclick="toggleForm()">+ Add Product</button>
+</div>
+
+<div id="productForm" class="card" style="display: none; margin-bottom: 20px;">
+    <div class="card-header">
+        <h3>New Product</h3>
+    </div>
+    <div class="card-body">
+        <form method="post" action="/products" class="form-grid">
+            <div class="form-group">
+                <label for="name">Product Name</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="sku">SKU</label>
+                <input type="text" id="sku" name="sku" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="category_id">Category</label>
+                <select id="category_id" name="category_id">
+                    <option value="">Select Category</option>
+                    {% for category in categories %}
+                    <option value="{{ category.id }}">{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="uom">Unit of Measure</label>
+                <input type="text" id="uom" name="uom" placeholder="e.g. pcs, kg" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="reorder_level">Reorder Level</label>
+                <input type="number" id="reorder_level" name="reorder_level" step="0.01" value="0">
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Create Product</button>
+                <button type="button" class="btn btn-secondary" onclick="toggleForm()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <form method="get" action="/products" class="search-form">
+            <input type="text" name="search" placeholder="Search by name or SKU..." value="{{ search }}">
+            <button type="submit" class="btn btn-secondary">Search</button>
+        </form>
+    </div>
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>SKU</th>
+                    <th>UoM</th>
+                    <th>Reorder Level</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr>
+                    <td>{{ product.id }}</td>
+                    <td>{{ product.name }}</td>
+                    <td><code>{{ product.sku }}</code></td>
+                    <td>{{ product.uom }}</td>
+                    <td>{{ product.reorder_level }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="text-center">No products found</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+function toggleForm() {
+    const form = document.getElementById('productForm');
+    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+}
+</script>
+{% endblock %}
