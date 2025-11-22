@@ -1,4 +1,5 @@
-# StockMaster - Inventory Management System
+# StockMaster - Inventory Management 
+website link: https://stockmaster-qday.onrender.com
 
 A full-stack Inventory Management System built with FastAPI, SQLAlchemy, and PostgreSQL.
 
